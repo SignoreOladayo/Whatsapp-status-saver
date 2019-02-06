@@ -1,9 +1,15 @@
 <ion-header class="header-cc">
 
   <ion-toolbar class="header-cc" no-border-top style="padding-top:25px">
-      <ion-title style="text-align: center;font-size: 19px; font-weight: 600; padding-bottom: 20px;">
-          Status Downloader
+      <ion-title style="font-size: 19px; font-weight: 600; padding-bottom: 20px;">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="10" style="font-size:16px; padding-left:30px">Status Downloader</ion-col>
+              <ion-col size="2" (click)="refresh()"><ion-icon name="refresh"></ion-icon></ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-title>
+        
     <ion-segment [(ngModel)]="pet">
       <ion-segment-button class="seg-btn" value="kittens" style="color:white;">
         Kittens
@@ -18,17 +24,8 @@
 <ion-content>
  <ion-grid>
    <ion-row align-items: stretch>
-     <ion-col size="6">
-       <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
-     </ion-col>
-     <ion-col size="6">
-        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
-     </ion-col>
-     <ion-col size="6">
-        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
-     </ion-col>
-     <ion-col size="6">
-        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
+     <ion-col size="6" *ngFor="let photo of photos" >
+       <img src="{{photo.url}}" id="{{photo.name}}" alt="">
      </ion-col>
    </ion-row>
  </ion-grid>
