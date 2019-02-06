@@ -1,12 +1,35 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
+<ion-header class="header-cc">
+
+  <ion-toolbar class="header-cc" no-border-top style="padding-top:25px">
+      <ion-title style="text-align: center;font-size: 19px; font-weight: 600; padding-bottom: 20px;">
+          Status Downloader
+        </ion-title>
+    <ion-segment [(ngModel)]="pet">
+      <ion-segment-button class="seg-btn" value="kittens" style="color:white;">
+        Kittens
+      </ion-segment-button>
+      <ion-segment-button class="seg-btn" value="puppies" style="color:white">
+        Puppies
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+<ion-content>
+ <ion-grid>
+   <ion-row align-items: stretch>
+     <ion-col size="6">
+       <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
+     </ion-col>
+     <ion-col size="6">
+        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
+     </ion-col>
+     <ion-col size="6">
+        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
+     </ion-col>
+     <ion-col size="6">
+        <img src="http://modellist-id.com/wp-content/uploads/2016/09/riyaray1.jpg" alt="">
+     </ion-col>
+   </ion-row>
+ </ion-grid>
 </ion-content>
