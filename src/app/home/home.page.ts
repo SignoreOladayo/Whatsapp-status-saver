@@ -16,11 +16,27 @@ export class HomePage implements OnInit {
   allPhotos:any[] = []
   photos:any[] = []
   allVideos:any[] = []
+  selectedMedia:any[] = []
+
+ 
 
 
   ngOnInit(){
     this.getMedia()
   }
+
+  saveMedia(){
+    //copy the media from the status folder to the photo Library
+    
+  }
+
+ 
+  markForDownload(event){
+    let id = event.target.id
+    this.selectedMedia.push(id)
+  }
+
+  
 
   refresh() {
     console.log('refresher')
