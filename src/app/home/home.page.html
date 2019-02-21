@@ -10,11 +10,11 @@
           </ion-grid>
         </ion-title>
         
-    <ion-segment [(ngModel)]="pet">
-      <ion-segment-button class="seg-btn" value="kittens" style="color:white;">
+    <ion-segment [(ngModel)]="mediaType">
+      <ion-segment-button class="seg-btn" value="photos" style="color:white;">
         Photos
       </ion-segment-button>
-      <ion-segment-button class="seg-btn" value="puppies" style="color:white">
+      <ion-segment-button class="seg-btn" value="videos" style="color:white" (click)="setVideos(0)">
         Videos
       </ion-segment-button>
     </ion-segment>
@@ -22,15 +22,38 @@
 </ion-header>
 
 <ion-content>
- <ion-grid>
-   <ion-row align-items: stretch>
-     <ion-col size="6" *ngFor="let photo of photos" style="position:relative" text-center>
-      <ion-checkbox id="{{photo.name}}" style="position:absolute" (ionChange)="markForDownload($event)"></ion-checkbox>
-       <img src="{{photo.url}}" id="{{photo.name}}" alt="" height="200px">
-     </ion-col>
-   </ion-row>
- </ion-grid>
- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-   <ion-fab-button color="success" (click)="saveMedia()"><ion-icon name="download"></ion-icon></ion-fab-button>
- </ion-fab>
+ <div [ngSwitch]="mediaType">
+    <div *ngSwitchCase="'photos'">
+        <ion-grid>
+            <ion-row align-items: stretch>
+              <ion-col size="6" *ngFor="let photo of photos" style="position:relative" text-center>
+               <ion-checkbox class="media-selector" id="{{photo.name}}" style="position:absolute" (ionChange)="markForDownload($event)"></ion-checkbox>
+                <img src="{{photo.url}}" id="{{photo.name}}" alt="" height="200px">
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+         
+    </div>
+
+
+    <div *ngSwitchCase="'videos'">
+        <ion-grid>
+            <ion-row align-items: stretch>
+              <ion-col size="6" *ngFor="let video of videos" style="position:relative" text-center>
+               <ion-checkbox class="media-selector" id="{{video.name}}" style="position:absolute" (ionChange)="markForDownload($event)"></ion-checkbox>
+                <img src="{{video.vidThumb}}" id="{{video.name}}" alt="" height="200px">
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          
+    </div>
+ </div>
 </ion-content>
+
+<ion-footer>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="success" (click)="saveMedia()">
+          <ion-icon name="download"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+ </ion-footer>

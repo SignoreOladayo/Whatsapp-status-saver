@@ -6,6 +6,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
+import { AdMobFree } from '@ionic-native/admob-free/ngx';
 
 
 import { AppComponent } from './app.component';
@@ -23,6 +25,8 @@ import { AppRoutingModule } from './app-routing.module';
     StatusBar,
     SplashScreen,
     File,
+    VideoEditor,
+    AdMobFree,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

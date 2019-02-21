@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
+import { AdMobFree, AdMobFreeBannerConfig, AdMobFreeInterstitialConfig } from '@ionic-native/admob-free/ngx';
 
 @Component({
   selector: 'app-home',
@@ -8,13 +11,18 @@ import { File } from '@ionic-native/file/ngx';
 })
 export class HomePage implements OnInit {
 
-  constructor(private file: File){
-    
+  mediaType:string = 'photos'
+
+  constructor(private admobFree: AdMobFree, private videoEditor: VideoEditor, private file: File, public loadingController: LoadingController, public toastController: ToastController){
+    this.showInterstitial()
+    this.showBanner()
   }
 
   allMedia:any[] = []
   allPhotos:any[] = []
   photos:any[] = []
+  videos:any[] = []
+  vidsWithThumbs:any[] = []
   allVideos:any[] = []
   selectedMedia:any[] = []
 
@@ -25,22 +33,116 @@ export class HomePage implements OnInit {
     this.getMedia()
   }
 
-  saveMedia(){
+  showBanner(){
+    const bannerConfig: AdMobFreeBannerConfig = {
+      isTesting: false,
+      autoShow: true,
+      id: ''
+     };
+     this.admobFree.banner.config(bannerConfig);
+     
+     this.admobFree.banner.prepare().then(()=>{ console.log('shown') }).catch(()=> {})
+  }
+
+  showInterstitial() {
+    const interstitialConfig: AdMobFreeInterstitialConfig = {
+      isTesting: false,
+      autoShow: true,
+      id: ''
+     };
+     this.admobFree.interstitial.config(interstitialConfig);
+     
+     this.admobFree.interstitial.prepare().then(()=>{ console.log('shown') }).catch(()=> {})
+  }
+
+  async saveMedia(){
     //copy the media from the status folder to the photo Library
+    let rootDir = this.file.externalRootDirectory
     
+    const loading = await this.loadingController.create({
+      message: 'Saving...'
+    });
+
+    loading.present()
+
+    console.log(this.selectedMedia)
+    this.file.checkDir(this.file.externalRootDirectory, 'WhatsAppSaver')
+             .then(()=> {
+             const mediaLooper =  this.selectedMedia.map((media)=> {
+                 this.file.copyFile(rootDir+'WhatsApp/Media/.Statuses', media, rootDir+'WhatsAppSaver', '')
+                          .then(()=>{
+                            return media
+                          })
+                          .catch(() => {
+                            //display the error
+                          })
+               })
+
+               Promise.all(mediaLooper)
+                      .then(async ()=> {
+                        loading.dismiss()
+                        const toast = await this.toastController.create({
+                          message: 'Saved!',
+                          duration: 2000
+                        });
+                        toast.present();
+                        this.selectedMedia = []
+                      })
+               
+             })
+             .catch(() => {
+              //create the dir and copy
+              this.file.createDir(rootDir, 'WhatsAppSaver', false)
+                       .then(()=> {
+                            const looper = this.selectedMedia.map(async (media)=> {
+                              this.file.copyFile(rootDir+'WhatsApp/Media/.Statuses', media, rootDir+'WhatsAppSaver', '')
+                                      .then(()=>{
+                                        return media
+                                      })
+                                      .catch(() => {
+                                        //display the error
+                                      })
+                            })
+              
+                            Promise.all(looper)
+                                  .then(async ()=> {
+                                      loading.dismiss()
+                                      const toast = await this.toastController.create({
+                                        message: 'Saved!',
+                                        duration: 2000
+                                      });
+                                      toast.present();
+                                      this.selectedMedia = []
+                                  })
+                       })
+            })
   }
 
  
   markForDownload(event){
     let id = event.target.id
-    this.selectedMedia.push(id)
+ 
+    if(event.target.checked) {
+
+      this.selectedMedia.push(id)
+    } else {
+      this.selectedMedia.splice(this.selectedMedia.indexOf(id), 1)
+    }
   }
 
   
 
-  refresh() {
+  async refresh() {
+    const loading = await this.loadingController.create({
+      message: 'updating...',
+      duration: 2000
+    });
+    loading.present()
+
     console.log('refresher')
     this.getMedia()
+    this.showInterstitial()
+    this.showBanner()
   }
 
   setPhotos(){
@@ -54,6 +156,49 @@ export class HomePage implements OnInit {
    
   }
 
+
+  setVideos(index:number){
+    console.log(this.allVideos)
+
+    if (index === undefined) {
+      index = 0
+    }
+    let rootDir = this.file.externalRootDirectory
+   
+    if (index >= this.allVideos.length) {
+      return
+    }
+
+    this.videoEditor.createThumbnail({
+      fileUri: rootDir+'WhatsApp/Media/.Statuses/'+this.allVideos[index].name,
+      outputFileName:this.allVideos[index].name.split('.').shift()
+    })
+    .then((thumbUrl) => {
+      
+      //get dataUrl
+      let tempPath = thumbUrl.split('/')
+      let thumbName = tempPath.pop()
+      let pathToThumb = 'file://'+tempPath.join('/')+'/'
+     
+     
+      this.file.readAsDataURL(pathToThumb, thumbName)
+               .then((vidThumb) => {
+                 
+                 this.videos.push({vidThumb, name:this.allVideos[index].name})
+                 this.setVideos(++index)
+               })
+               .catch((err) => {console.log(err)})
+      
+    })
+    
+    this.showInterstitial()
+    this.showBanner()
+    
+    
+   }
+
+
+
   getMedia() {
     let root = this.file.externalRootDirectory
     //open the directory
@@ -63,6 +208,7 @@ export class HomePage implements OnInit {
                          .then((files) => {
                           const mediaMap = files.map(async (media) => {
                              let extension = media.name.split('.').pop()
+                             
                              if (extension === 'mp4') {
                                this.allVideos.push(media)
                              } else {

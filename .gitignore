@@ -11,6 +11,8 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
+status-downloader.keystore
+status-saver.apk
 
 .idea/
 .ionic/
@@ -28,6 +30,7 @@ plugins/
 plugins/android.json
 plugins/ios.json
 $RECYCLE.BIN/
+
 
 .DS_Store
 Thumbs.db
